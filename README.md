@@ -61,5 +61,18 @@ blocks are 4096 bits
     - `test_iput`: 
         - `iput`: puts an inode back to the in-core table, writing it to the disk if necessary
         - `read_inode`: reads an inode from the disk
+    - `test_directory_open_and_close`:
+        - `directory_open`: opens the directory in the passed inode number
+        - `directory_close`: frees the passed directory and writes the inode of the directory
+    - `test_mkfs`:
+        - `mkfs`: sets up the root directory of a file system
+        - `iget`: finds inode for the passed inode number
+    - `test_directory_get`:
+        - `mkfs`: sets up the root directory of a file system
+        - `directory_open`: opens the directory in the passed inode number
+        - `directory_get`: gets an entry from the passed directory
+        - `directory_close`: frees the passed directory and writes the inode of the directory
+    - `test_ls`:
+        - 'ls': iteratively calls and prints `directory_get` until it has printed all entries
 
 ## Notes

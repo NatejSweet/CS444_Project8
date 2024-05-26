@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -DCTEST_ENABLE
 LIB = libvvsfs.a
-SRCS = image.c block.c inode.c free.c pack.c
+SRCS = image.c block.c inode.c free.c pack.c dir.c ls.c
 OBJS = $(SRCS:.c=.o)
 EXEC = testfs
 
@@ -21,7 +21,7 @@ $(LIB): $(OBJS)
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-testfs.o: testfs.c image.h block.h pack.h inode.h free.h
+testfs.o: testfs.c image.h block.h pack.h inode.h free.h dir.h ls.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:

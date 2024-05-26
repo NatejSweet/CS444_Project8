@@ -5,28 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include <cstdint>
+#include <stdint.h>
 
-
-#define ROOT_INODE_NUM 0
-#define BLOCK_SIZE 4096
-#define DIR_ENTRY_SIZE 32
-
-struct dir_entry {
-    uint16_t inode_num;
-    char name[16];
-    char reserved[14];
-};
-
-struct directory {
-    struct inode *inode;
-    unsigned int offset;
-};
-
-struct directory_entry {
-    unsigned int inode_num;
-    char name[16];
-};
 
 
 void mkfs(){
@@ -37,7 +17,7 @@ void mkfs(){
     root->inode_num = ROOT_INODE_NUM;
     int data_block_num = alloc(data_block);
     root->block_ptr[0] = data_block_num;
-    root->size = 2*sizeof(struct dir_entry);
+    root->size = 2*DIR_ENTRY_SIZE;
     root->flags = 2;
     unsigned char dir_data[BLOCK_SIZE] = {0, 0, 0, 0, 0, 0};
     // . directory
@@ -81,4 +61,9 @@ int directory_get(struct directory *dir, struct directory_entry *ent){
     dir->offset += DIR_ENTRY_SIZE;
     return 0;
 
+}
+
+void directory_close(struct directory *dir){
+    iput(dir->inode);
+    free(dir);
 }

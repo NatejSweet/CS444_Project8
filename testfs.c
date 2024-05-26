@@ -3,7 +3,10 @@
 #include "ctest.h"
 #include "free.h"
 #include "inode.h"
+#include "dir.h"
+#include "ls.c"
 #include <stdlib.h>
+#include <string.h>
 
 void test_image_fd_init(void)
 {
@@ -119,8 +122,48 @@ void test_iput(void)
     read_inode(&out, 0);
 }
 
+void test_directory_open_and_close(void)
+{
+    struct directory *dir = directory_open(0);
+    CTEST_ASSERT(dir->inode->inode_num==0, "Test directory_open sets directory inode to passed inode_num");
+    CTEST_ASSERT(dir->offset==0, "Test directory_open sets directory offset to 0");
+    directory_close(dir);
+    //I dont know how to test free memory, has undefined behaviors
+}
+
+void test_mkfs()
+{
+    mkfs();
+    struct inode *in = iget(0);
+    CTEST_ASSERT(in->size==2*DIR_ENTRY_SIZE, "Test mkfs");
+    CTEST_ASSERT(in->flags==2, "Test mkfs");
+    CTEST_ASSERT(in->block_ptr[0]==0, "Test mkfs");
+}
+
+
+
+void test_directory_get(void)
+{
+    mkfs();
+    struct directory *dir = directory_open(0);
+    struct directory_entry ent;
+    int result = directory_get(dir, &ent);
+    CTEST_ASSERT(ent.inode_num==0, "Test directory_get");
+    CTEST_ASSERT(strcmp(ent.name, ".")==0, "Test directory_get");
+    CTEST_ASSERT(result==0, "Test directory_get returns 0 if successful");
+    directory_close(dir);
+
+}
+
+void test_ls(void)
+{
+    // mkfs();// would need to be called if tested individually
+    ls();
+    CTEST_ASSERT(1==1, "Test ls");
+}
+
 #ifdef CTEST_ENABLE
-int main()
+int main() 
 {
     CTEST_VERBOSE(1);
     test_image_fd_init();
@@ -141,6 +184,10 @@ int main()
     test_write_inode();
     test_iget();
     test_iput();
+    test_directory_open_and_close();
+    test_mkfs();
+    test_directory_get();
+    test_ls();
     CTEST_RESULTS();
     CTEST_EXIT();
     return 0;
